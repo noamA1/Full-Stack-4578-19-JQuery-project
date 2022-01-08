@@ -1,0 +1,33 @@
+#main-container {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: repeat(4, 1fr);
+  /* grid-gap: 0.5%; */
+  height: 100%;
+}
+
+@media only screen and (max-width: 480px) {
+  #main-container {
+    /* grid-gap: 0.1%; */
+    grid-template-columns: 100%;
+  }
+}
+
+.card {
+  width: 95%;
+}
+.card-title {
+  position: relative;
+}
+
+/* .card-title__switch-container {
+  position: absolute;
+  right: 5px;
+  top: 10%;
+  width: 85px;
+  height: 15px;
+}
+.card-title__switch-input {
+  width: 100% !important;
+  height: 100%;
+} */
