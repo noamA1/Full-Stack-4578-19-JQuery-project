@@ -13,15 +13,57 @@
 </head>
 
 <body>
+    <div class="modal fade" id="coins-modal" tabindex="-1" aria-labelledby="coins-modal__label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="coins-modal__label">Sorry you can't add more then 5 coins to report.
+                        <span>Please remove one coin</span>
+                    </h5>
+                    <button type="button" class="btn-close modal__close-button" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body"> </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal__close-button"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <header class="heading">
-        <nav class="navbar navbar-light bg-light">
-            <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
                 <a class="navbar-brand" href="#">
                     <img src="img/nav-logo.jpg" alt="" width="100" height="80">
                 </a>
-                <a class="btn btn-outline-success " id="nav-coins-button" type="button">Coins</a>
-                <a class="btn btn-outline-success " id="nav-reports-button" type="button">Live Reports</a>
-                <a class="btn btn-outline-success " id="nav-about-button" type="button">About</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="nav-coins-button" type="button">Coins</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="nav-reports-button" type="button">Live Reports</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="nav-about-button" type="button">About</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex">
+                        <input class="form-control me-2 nav-form__search-coin-input" type="search"
+                            placeholder="Search Coin">
+                        <button class="btn btn-outline-success nav-form__search-coin-button"
+                            type="submit">Search</button>
+                    </form>
+                </div>
             </div>
         </nav>
     </header>
@@ -30,6 +72,9 @@
     </main>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <!-- <script src="scripts/coins.js"></script> -->

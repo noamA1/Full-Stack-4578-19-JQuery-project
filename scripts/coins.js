@@ -1,23 +1,32 @@
 const URL = "https://api.coingecko.com/api/v3/coins";
 const coinsCardContainerElement = $("#main-container");
-let selectedCoinsCounter = 0;
+const serchButtonElement = $(".nav-form__search-coin-button");
+let selectedCoinsArray = [],
+  coinsArray = [];
 
-const displayCoins = async () => {
-  let cardsElements;
-
-  coinsCardContainerElement.empty();
+const display = async () => {
   await getDataFromServer(`${URL}/list`)
     .then((data) => {
-      cardsElements = createCardsElements(data);
-      coinsCardContainerElement.append(cardsElements);
+      coinsArray = [...data];
+      displayCoins(false);
     })
     .catch((e) => {
       console.log(e);
     });
 };
+const displayCoins = (isFromModal) => {
+  let cardsElements;
+
+  coinsCardContainerElement.empty();
+  if (!isFromModal) {
+    cardsElements = createCardsElements(coinsArray);
+  }
+  coinsCardContainerElement.append(cardsElements);
+};
 
 const createCardsElements = (coinsArray) => {
   let cards = "";
+
   for (let i = 0; i < 100; i++) {
     cards += `<div class="card">
                 <div class="card-body">
@@ -25,15 +34,21 @@ const createCardsElements = (coinsArray) => {
                       i
                     ].symbol.toUpperCase()}</h5>
                     <div class="form-check form-switch card-title__switch-container">
-                        <input class="form-check-input card-title__switch-input" type="checkbox" role="switch" id="card-title__switch${i}">
+                        <input class="form-check-input card-title__switch-input" type="checkbox" role="switch" id="coin-switch-${
+                          coinsArray[i].id
+                        }">
                     </div>
                     <p class="card-text">${coinsArray[i].name}</p>
-                    <button class="btn btn-primary card__more-info-button" id = "${
+                    <a data-bs-toggle="collapse" href="#collapse-coin-info-${
                       coinsArray[i].id
-                    }">More info</button>
-                    <div class = "card__coin-info-container" id = "coin-info-${
+                    }" 
+                    role="button"  class="btn btn-primary card__more-info-button" id = "${
                       coinsArray[i].id
-                    }" ></div>
+                    }">More info</a>
+                    
+                    <div class="collapse" id="collapse-coin-info-${
+                      coinsArray[i].id
+                    }"></div>
                 </div>
             </div>`;
   }
@@ -62,7 +77,7 @@ coinsCardContainerElement.on(
   ".card__more-info-button",
   async (event) => {
     const coinId = event.currentTarget.id;
-    const infoContainer = $(`#coin-info-${coinId}`);
+    const infoContainer = $(`#collapse-coin-info-${coinId}`);
     infoContainer.empty();
     let coinInfo = {};
 
@@ -94,14 +109,99 @@ const toggleCoinInfo = (containerElement, coinObject) => {
           <li class = "card__coin-info-list-item"> Price in euro: ${coinObject.eur} &#8364;</li>
       </ul>
   `);
-  containerElement.slideToggle(2000);
+  //   containerElement.slideToggle(2000);
 };
 
 const saveInSessionStorage = (objectToSave, coinObjId) => {
   sessionStorage.setItem(`${coinObjId}`, JSON.stringify(objectToSave));
   setTimeout(() => {
     sessionStorage.removeItem(`${coinObjId}`);
-  }, 12000);
+  }, 4000);
 };
 
-export { displayCoins };
+// serch coin logic
+serchButtonElement.click((event) => {
+  //   console.log(coinsArray);
+  event.preventDefault();
+  const serchKeyWord = $(".nav-form__search-coin-input").val();
+  const findCoins = coinsArray.filter((coin) => {
+    if (coin.id.includes(serchKeyWord.toLowerCase())) {
+      return coin;
+    }
+  });
+  console.log(findCoins);
+});
+
+// selected coins and display modal
+
+$(coinsCardContainerElement).on(
+  "click",
+  ".card-title__switch-input",
+  (event) => {
+    const coinSwitchElement = event.currentTarget;
+    changeSelectedCoins(coinSwitchElement, false);
+  }
+);
+
+const showCoinsModal = () => {
+  let selectedCoinsStr = "";
+  const modalBodyElement = $(".modal-body");
+  modalBodyElement.empty();
+  for (let i = 0; i < selectedCoinsArray.length - 1; i++) {
+    selectedCoinsStr += `
+    <div calss = "modal__selected-coin">
+        <p>${selectedCoinsArray[i].symbol.toUpperCase()}</p>
+        <div class="form-check form-switch modal__switch-container">
+            <input class="form-check-input modal__switch-input" type="checkbox" checked role="switch" id="coin-switch-${
+              selectedCoinsArray[i].id
+            }">
+        </div>
+    </div>`;
+  }
+
+  modalBodyElement.append(selectedCoinsStr);
+
+  $("#coins-modal").modal("show");
+};
+$("#coins-modal").on("click", ".modal__switch-input", (event) => {
+  changeSelectedCoins(event.currentTarget, true);
+});
+
+$(".modal__close-button").click(() => {
+  const lastCoin = selectedCoinsArray.pop();
+  $(coinsCardContainerElement).find(
+    `#coin-switch-${lastCoin.id}`
+  )[0].checked = false;
+});
+
+const changeSelectedCoins = (coinSwitchElement, isFromModal) => {
+  const coinId = coinSwitchElement.id.substr(12);
+  const coinToAddOrRemove = coinsArray.find((coin) => coin.id === coinId);
+
+  if (!isFromModal) {
+    if (coinSwitchElement.checked) {
+      selectedCoinsArray.push(coinToAddOrRemove);
+
+      if (selectedCoinsArray.length >= 6) {
+        showCoinsModal();
+      }
+    } else {
+      selectedCoinsArray.splice(
+        $.inArray(coinToAddOrRemove, selectedCoinsArray),
+        1
+      );
+    }
+  } else {
+    selectedCoinsArray.splice(
+      $.inArray(coinToAddOrRemove, selectedCoinsArray),
+      1
+    );
+
+    $(coinsCardContainerElement).find(
+      `#coin-switch-${coinId}`
+    )[0].checked = false;
+
+    $("#coins-modal").modal("hide");
+  }
+};
+export { display };
