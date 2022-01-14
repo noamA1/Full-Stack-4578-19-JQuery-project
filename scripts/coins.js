@@ -8,46 +8,44 @@ const display = async () => {
   await getDataFromServer(`${URL}/list`)
     .then((data) => {
       coinsArray = [...data];
-      displayCoins(false);
+      displayCoins(coinsArray);
     })
     .catch((e) => {
       console.log(e);
     });
 };
-const displayCoins = (isFromModal) => {
+const displayCoins = (coinsToDisplay) => {
   let cardsElements;
 
   coinsCardContainerElement.empty();
-  if (!isFromModal) {
-    cardsElements = createCardsElements(coinsArray);
-  }
+  cardsElements = createCardsElements(coinsToDisplay);
   coinsCardContainerElement.append(cardsElements);
 };
 
-const createCardsElements = (coinsArray) => {
+const createCardsElements = (coinsArrayForCards) => {
   let cards = "";
 
   for (let i = 0; i < 100; i++) {
     cards += `<div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">${coinsArray[
+                    <h5 class="card-title">${coinsArrayForCards[
                       i
                     ].symbol.toUpperCase()}</h5>
                     <div class="form-check form-switch card-title__switch-container">
                         <input class="form-check-input card-title__switch-input" type="checkbox" role="switch" id="coin-switch-${
-                          coinsArray[i].id
+                          coinsArrayForCards[i].id
                         }">
                     </div>
-                    <p class="card-text">${coinsArray[i].name}</p>
+                    <p class="card-text">${coinsArrayForCards[i].name}</p>
                     <a data-bs-toggle="collapse" href="#collapse-coin-info-${
-                      coinsArray[i].id
+                      coinsArrayForCards[i].id
                     }" 
                     role="button"  class="btn btn-primary card__more-info-button" id = "${
-                      coinsArray[i].id
+                      coinsArrayForCards[i].id
                     }">More info</a>
                     
                     <div class="collapse" id="collapse-coin-info-${
-                      coinsArray[i].id
+                      coinsArrayForCards[i].id
                     }"></div>
                 </div>
             </div>`;
@@ -109,7 +107,6 @@ const toggleCoinInfo = (containerElement, coinObject) => {
           <li class = "card__coin-info-list-item"> Price in euro: ${coinObject.eur} &#8364;</li>
       </ul>
   `);
-  //   containerElement.slideToggle(2000);
 };
 
 const saveInSessionStorage = (objectToSave, coinObjId) => {
@@ -121,15 +118,15 @@ const saveInSessionStorage = (objectToSave, coinObjId) => {
 
 // serch coin logic
 serchButtonElement.click((event) => {
-  //   console.log(coinsArray);
   event.preventDefault();
   const serchKeyWord = $(".nav-form__search-coin-input").val();
-  const findCoins = coinsArray.filter((coin) => {
+  console.log(`${serchKeyWord.toLowerCase()}`);
+  const filteredCoinsArray = coinsArray.filter((coin) => {
     if (coin.id.includes(serchKeyWord.toLowerCase())) {
       return coin;
     }
   });
-  console.log(findCoins);
+  displayCoins(filteredCoinsArray);
 });
 
 // selected coins and display modal
@@ -204,4 +201,4 @@ const changeSelectedCoins = (coinSwitchElement, isFromModal) => {
     $("#coins-modal").modal("hide");
   }
 };
-export { display };
+export { display, selectedCoinsArray };
