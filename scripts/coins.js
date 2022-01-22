@@ -34,13 +34,15 @@ const createCardsElements = (coinsArrayForCards) => {
                     <div class="form-check form-switch card-title__switch-container">
                         <input class="form-check-input card-title__switch-input" type="checkbox" role="switch" id="coin-switch-${
                           coinsArrayForCards[i].id
-                        }">
+                        }" ${
+      checkIfSelected(coinsArrayForCards[i].id) ? "checked" : ""
+    }>
                     </div>
                     <p class="card-text">${coinsArrayForCards[i].name}</p>
                     <a data-bs-toggle="collapse" href="#collapse-coin-info-${
                       coinsArrayForCards[i].id
                     }" 
-                    role="button"  class="btn btn-primary card__more-info-button" id = "${
+                    role="button" class="btn btn-primary card__more-info-button" id = "${
                       coinsArrayForCards[i].id
                     }">More info</a>
                     
@@ -53,6 +55,14 @@ const createCardsElements = (coinsArrayForCards) => {
   return cards;
 };
 
+const checkIfSelected = (coinId) => {
+  const isSelected = selectedCoinsArray.find(
+    (selectedCoin) => selectedCoin.id === coinId
+  )
+    ? true
+    : false;
+  return isSelected;
+};
 const getDataFromServer = (url) => {
   const coinsPromise = new Promise((resolve, reject) => {
     $.ajax({
@@ -146,7 +156,7 @@ const showCoinsModal = () => {
   modalBodyElement.empty();
   for (let i = 0; i < selectedCoinsArray.length - 1; i++) {
     selectedCoinsStr += `
-    <div calss = "modal__selected-coin">
+    <div class = "modal__selected-coin">
         <p>${selectedCoinsArray[i].symbol.toUpperCase()}</p>
         <div class="form-check form-switch modal__switch-container">
             <input class="form-check-input modal__switch-input" type="checkbox" checked role="switch" id="coin-switch-${
@@ -201,4 +211,5 @@ const changeSelectedCoins = (coinSwitchElement, isFromModal) => {
     $("#coins-modal").modal("hide");
   }
 };
+
 export { display, selectedCoinsArray };
