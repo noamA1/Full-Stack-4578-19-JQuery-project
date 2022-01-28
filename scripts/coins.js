@@ -5,14 +5,21 @@ let selectedCoinsArray = [],
   coinsArray = [];
 
 const display = async () => {
+  coinsCardContainerElement.show();
+  coinsCardContainerElement.empty();
+  $("#home-container").hide();
+  $(".heading").show();
+  createSpinner(coinsCardContainerElement);
   await getDataFromServer(`${URL}/list`)
     .then((data) => {
       coinsArray = [...data];
       displayCoins(coinsArray);
+      // $(".spinner").hide();
     })
     .catch((e) => {
       console.log(e);
     });
+  $(".spinner").remove();
 };
 const displayCoins = (coinsToDisplay) => {
   let cardsElements;
@@ -42,7 +49,7 @@ const createCardsElements = (coinsArrayForCards) => {
                     <a data-bs-toggle="collapse" href="#collapse-coin-info-${
                       coinsArrayForCards[i].id
                     }" 
-                    role="button" class="btn btn-primary card__more-info-button" id = "${
+                    role="button" class="btn btn-action card__more-info-button" id = "${
                       coinsArrayForCards[i].id
                     }">More info</a>
                     
@@ -53,6 +60,15 @@ const createCardsElements = (coinsArrayForCards) => {
             </div>`;
   }
   return cards;
+};
+
+const createSpinner = (elementToAppend) => {
+  elementToAppend.append(`
+  <div class="spinner d-flex justify-content-center">
+  <span class="spinner-text">Loading...</span>
+    <div class="spinner-border" role="status">
+      </div>
+  </div>`);
 };
 
 const checkIfSelected = (coinId) => {
@@ -92,6 +108,7 @@ coinsCardContainerElement.on(
     if (sessionStorage.getItem(`${coinId}`)) {
       coinInfo = JSON.parse(sessionStorage.getItem(`${coinId}`));
     } else {
+      createSpinner(infoContainer);
       await getDataFromServer(`${URL}/${coinId}`).then((info) => {
         coinInfo = {
           img: info.image.small,
@@ -99,22 +116,26 @@ coinsCardContainerElement.on(
           nis: info.market_data.current_price.ils,
           eur: info.market_data.current_price.eur,
         };
+
         saveInSessionStorage(coinInfo, coinId);
       });
     }
+
+    $(".spinner").remove();
     toggleCoinInfo(infoContainer, coinInfo);
   }
 );
 
 const toggleCoinInfo = (containerElement, coinObject) => {
+  // $(".spinner").hide();
   containerElement.append(`
       <div class = "card__coin-info-image">
           <img src = "${coinObject.img}"/>
       </div>
-      <ul class = "card__coin-info-list">
-          <li class = "card__coin-info-list-item"> Price in dollars: ${coinObject.usd} &#36;</li>
-          <li class = "card__coin-info-list-item"> Price in new israeli shekel: ${coinObject.nis} &#8362;</li>
-          <li class = "card__coin-info-list-item"> Price in euro: ${coinObject.eur} &#8364;</li>
+      <ul class = "list-group list-group-flush card__coin-info-list">
+          <li class = "list-group-item card__coin-info-list-item"> In dollars: ${coinObject.usd} &#36;</li>
+          <li class = "list-group-item card__coin-info-list-item"> In new israeli shekel: ${coinObject.nis} &#8362;</li>
+          <li class = "list-group-item card__coin-info-list-item"> In euro: ${coinObject.eur} &#8364;</li>
       </ul>
   `);
 };
@@ -136,6 +157,7 @@ serchButtonElement.click((event) => {
       return coin;
     }
   });
+  console.log(filteredCoinsArray);
   displayCoins(filteredCoinsArray);
 });
 
@@ -212,4 +234,4 @@ const changeSelectedCoins = (coinSwitchElement, isFromModal) => {
   }
 };
 
-export { display, selectedCoinsArray };
+export { display, selectedCoinsArray, createSpinner };

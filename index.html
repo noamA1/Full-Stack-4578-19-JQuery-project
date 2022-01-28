@@ -33,11 +33,14 @@
         </div>
     </div>
     <header class="heading">
+        <div class="heading-box">
+            <h3 class="heading-box__text">
+                Crypto information app
+            </h3>
+            <img src="img/header_img.jpeg" class="heading-box__img">
+        </div>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="img/nav-logo.jpg" alt="" width="100" height="80">
-                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +49,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#">Home</a>
+                            <a class="nav-link " type="button" aria-current="page" id="nav-home-button">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="nav-coins-button" type="button">Coins</a>
@@ -69,7 +72,10 @@
         </nav>
     </header>
     <main>
-        <div class="container" id="main-container"></div>
+        <div id="home-container"></div>
+        <div class="container" id="main-container">
+
+        </div>
     </main>
 </body>
 
@@ -80,7 +86,6 @@
     crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-
 <script type="module" src="index.js"></script>
 
 

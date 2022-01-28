@@ -4,9 +4,9 @@ const KEY = "72d2bdd4625d390ff6f2e343418ade46259b4465e7c9cbbe4508d263dcc6db69";
 const containerElement = $("#main-container");
 
 // Initial values for the chart
-let dataPoints = [],
-  data = [];
-let coinsArray = [];
+let dataPoints,
+  data,
+  coinsArray = [];
 let chart;
 
 const options = {
@@ -39,6 +39,9 @@ const options = {
 };
 
 const display = async (array) => {
+  console.log(array);
+  data = [];
+  dataPoints = [];
   if (array.length === 0) {
     alert("Sorry, you must select at least one coin to display this report");
     Coins.display();
@@ -48,7 +51,7 @@ const display = async (array) => {
   containerElement.empty();
   coinsArray = array;
 
-  containerElement.append(`<div id="chartContainer"></div>`);
+  // Coins.createSpinner(containerElement);
 
   addData(array);
   await $.each(array, (key, value) => {
@@ -64,6 +67,7 @@ const display = async (array) => {
       ).points,
     });
   });
+  containerElement.append(`<div id="chartContainer"></div>`);
 
   titleText += ` To USD`;
   options.title.text = titleText;
