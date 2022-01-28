@@ -42,46 +42,62 @@ const display = async (array) => {
   console.log(array);
   data = [];
   dataPoints = [];
-  if (array.length === 0) {
-    alert("Sorry, you must select at least one coin to display this report");
-    Coins.display();
-    return;
-  }
-  let titleText = "";
   containerElement.empty();
-  coinsArray = array;
+  if (array.length === 0) {
+    // alert("Sorry, you must select at least one coin to display this report");
+    $("html").prepend(`
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div>
+    Sorry, you must select at least one coin to display this report
+    <a href="#" class="alert-link">Go back</a>.
+    </div>
+  </div>
+    `);
+    // Coins.display();
+    // return;
+  } else {
+    let titleText = "";
+    // containerElement.empty();
+    coinsArray = array;
 
-  // Coins.createSpinner(containerElement);
+    // Coins.createSpinner(containerElement);
 
-  addData(array);
-  await $.each(array, (key, value) => {
-    titleText += `${value.symbol.toUpperCase()},`;
-    dataPoints.push({ coinSymbol: value.symbol, points: [] });
+    addData(array);
+    await $.each(array, (key, value) => {
+      titleText += `${value.symbol.toUpperCase()},`;
+      dataPoints.push({ coinSymbol: value.symbol, points: [] });
 
-    data.push({
-      type: "line",
-      name: value.symbol,
-      showInLegend: true,
-      dataPoints: dataPoints.find(
-        (coinPoints) => coinPoints.coinSymbol === value.symbol
-      ).points,
+      data.push({
+        type: "line",
+        name: value.symbol,
+        showInLegend: true,
+        dataPoints: dataPoints.find(
+          (coinPoints) => coinPoints.coinSymbol === value.symbol
+        ).points,
+      });
     });
-  });
-  containerElement.append(`<div id="chartContainer"></div>`);
+    containerElement.append(`<div id="chartContainer"></div>`);
 
-  titleText += ` To USD`;
-  options.title.text = titleText;
-  options.data = data;
+    titleText += ` To USD`;
+    options.title.text = titleText;
+    options.data = data;
 
-  chart = new CanvasJS.Chart("chartContainer", options);
+    chart = new CanvasJS.Chart("chartContainer", options);
 
-  containerElement.append(chart);
-  chart.render();
-  setTimeout(() => {
-    addData(coinsArray);
-  }, 3000);
+    containerElement.append(chart);
+    chart.render();
+    setTimeout(() => {
+      addData(coinsArray);
+    }, 3000);
+  }
 };
 
+$("html").on("click", ".alert-link", () => {
+  Coins.display();
+  $(".alert").remove();
+  return;
+});
 const addData = async (coins) => {
   await getDataFromServer(URL, coins)
     .then((coinsData) => {

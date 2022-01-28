@@ -17,7 +17,13 @@ const display = async () => {
       // $(".spinner").hide();
     })
     .catch((e) => {
-      console.log(e);
+      $("html")
+        .prepend(`<div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:">
+        <use xlink:href="#exclamation-triangle-fill"/>
+      </svg>
+      <div> ${e}</div>
+    </div>`);
     });
   $(".spinner").remove();
 };
