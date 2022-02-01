@@ -116,11 +116,18 @@ coinsCardContainerElement.on(
     } else {
       createSpinner(infoContainer);
       await getDataFromServer(`${URL}/${coinId}`).then((info) => {
+        console.log(typeof info.market_data.current_price.usd);
         coinInfo = {
           img: info.image.small,
-          usd: info.market_data.current_price.usd,
-          nis: info.market_data.current_price.ils,
-          eur: info.market_data.current_price.eur,
+          usd: new Intl.NumberFormat("en-IN", {
+            maximumSignificantDigits: 3,
+          }).format(info.market_data.current_price.usd),
+          nis: new Intl.NumberFormat("en-IN", {
+            maximumSignificantDigits: 3,
+          }).format(info.market_data.current_price.ils),
+          eur: new Intl.NumberFormat("en-IN", {
+            maximumSignificantDigits: 3,
+          }).format(info.market_data.current_price.eur),
         };
 
         saveInSessionStorage(coinInfo, coinId);
@@ -143,8 +150,9 @@ const toggleCoinInfo = (containerElement, coinObject) => {
           <li class = "list-group-item card__coin-info-list-item"> In new israeli shekel: ${coinObject.nis} &#8362;</li>
           <li class = "list-group-item card__coin-info-list-item"> In euro: ${coinObject.eur} &#8364;</li>
       </ul>
-  `);
+      `);
 };
+// $.number(5020.2364);
 
 const saveInSessionStorage = (objectToSave, coinObjId) => {
   sessionStorage.setItem(`${coinObjId}`, JSON.stringify(objectToSave));
