@@ -34,7 +34,7 @@ const displayCoins = (coinsToDisplay) => {
 const createCardsElements = (coinsArrayForCards) => {
   let cards = "";
 
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < coinsArrayForCards.length; i++) {
     cards += `<div class="card">
                 <div class="card-body">
                     <h5 class="card-title">${coinsArrayForCards[
@@ -78,7 +78,7 @@ const displayAlertMessage = (message, type) => {
 
   setTimeout(() => {
     $(".alert").remove();
-  }, 3000);
+  }, 5000);
 };
 
 const createSpinner = (elementToAppend) => {
@@ -171,7 +171,7 @@ const saveInSessionStorage = (objectToSave, coinObjId) => {
   sessionStorage.setItem(`${coinObjId}`, JSON.stringify(objectToSave));
   setTimeout(() => {
     sessionStorage.removeItem(`${coinObjId}`);
-  }, 4000);
+  }, 120000);
 };
 
 // serch coin logic

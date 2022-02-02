@@ -76,9 +76,9 @@ const display = async (array) => {
 
     containerElement.append(chart);
     chart.render();
-    setTimeout(() => {
+    setInterval(() => {
       addData(coinsArray);
-    }, 3000);
+    }, 2000);
   }
 };
 
