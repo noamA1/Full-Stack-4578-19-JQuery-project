@@ -5,8 +5,6 @@ import * as About from "./scripts/about.js";
 
 $(() => {
   Home.display();
-  // $("#main-container").css("display", "none");
-  // $(".heading").css("display", "none");
 
   $("#nav-coins-button").click(() => {
     Coins.display();

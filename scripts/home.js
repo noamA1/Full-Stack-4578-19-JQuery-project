@@ -18,7 +18,6 @@ const display = () => {
 };
 
 $(containerElement).on("click", "#discover-button", () => {
-  console.log("clicked");
   Coins.display();
 });
 

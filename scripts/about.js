@@ -1,9 +1,7 @@
 const containerElement = $("#main-container");
 
 const display = () => {
-  //   containerElement.show();
   containerElement.empty();
-  //   $(".heading").show();
   containerElement.append(`
   
     <div class = "about-text-box">

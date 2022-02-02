@@ -9,24 +9,20 @@ const display = async () => {
   coinsCardContainerElement.empty();
   $("#home-container").hide();
   $(".heading").show();
+
   createSpinner(coinsCardContainerElement);
+
   await getDataFromServer(`${URL}/list`)
     .then((data) => {
       coinsArray = [...data];
       displayCoins(coinsArray);
-      // $(".spinner").hide();
     })
     .catch((e) => {
-      $("html")
-        .prepend(`<div class="alert alert-warning d-flex align-items-center alert-dismissible fade show" role="alert">
-      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:">
-        <use xlink:href="#exclamation-triangle-fill"/>
-      </svg>
-      <div> ${e}</div>
-    </div>`);
+      displayAlertMessage(e, "warning");
     });
   $(".spinner").remove();
 };
+
 const displayCoins = (coinsToDisplay) => {
   let cardsElements;
 
@@ -68,6 +64,23 @@ const createCardsElements = (coinsArrayForCards) => {
   return cards;
 };
 
+const displayAlertMessage = (message, type) => {
+  $("html")
+    .prepend(`<div class="alert alert-${type} d-flex align-items-center alert-dismissible fade show" role="alert">
+      <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:">
+        <use xlink:href="#exclamation-triangle-fill"/>
+      </svg>
+      <div> 
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>`);
+
+  setTimeout(() => {
+    $(".alert").remove();
+  }, 3000);
+};
+
 const createSpinner = (elementToAppend) => {
   elementToAppend.append(`
   <div class="spinner d-flex justify-content-center">
@@ -77,6 +90,7 @@ const createSpinner = (elementToAppend) => {
   </div>`);
 };
 
+// the function below check if the user has chacked the coin before or not
 const checkIfSelected = (coinId) => {
   const isSelected = selectedCoinsArray.find(
     (selectedCoin) => selectedCoin.id === coinId
@@ -85,6 +99,7 @@ const checkIfSelected = (coinId) => {
     : false;
   return isSelected;
 };
+
 const getDataFromServer = (url) => {
   const coinsPromise = new Promise((resolve, reject) => {
     $.ajax({
@@ -115,8 +130,8 @@ coinsCardContainerElement.on(
       coinInfo = JSON.parse(sessionStorage.getItem(`${coinId}`));
     } else {
       createSpinner(infoContainer);
+
       await getDataFromServer(`${URL}/${coinId}`).then((info) => {
-        console.log(typeof info.market_data.current_price.usd);
         coinInfo = {
           img: info.image.small,
           usd: new Intl.NumberFormat("en-IN", {
@@ -140,7 +155,6 @@ coinsCardContainerElement.on(
 );
 
 const toggleCoinInfo = (containerElement, coinObject) => {
-  // $(".spinner").hide();
   containerElement.append(`
       <div class = "card__coin-info-image">
           <img src = "${coinObject.img}"/>
@@ -152,7 +166,6 @@ const toggleCoinInfo = (containerElement, coinObject) => {
       </ul>
       `);
 };
-// $.number(5020.2364);
 
 const saveInSessionStorage = (objectToSave, coinObjId) => {
   sessionStorage.setItem(`${coinObjId}`, JSON.stringify(objectToSave));
@@ -165,18 +178,23 @@ const saveInSessionStorage = (objectToSave, coinObjId) => {
 serchButtonElement.click((event) => {
   event.preventDefault();
   const serchKeyWord = $(".nav-form__search-coin-input").val();
-  console.log(`${serchKeyWord.toLowerCase()}`);
+
   const filteredCoinsArray = coinsArray.filter((coin) => {
     if (coin.id.includes(serchKeyWord.toLowerCase())) {
       return coin;
     }
   });
-  console.log(filteredCoinsArray);
-  displayCoins(filteredCoinsArray);
+  if (filteredCoinsArray.length === 0 || serchKeyWord.length === 0) {
+    displayAlertMessage(
+      "Sorry, we could not find what you looking for, please try again",
+      "warning"
+    );
+  } else {
+    displayCoins(filteredCoinsArray);
+  }
 });
 
 // selected coins and display modal
-
 $(coinsCardContainerElement).on(
   "click",
   ".card-title__switch-input",
@@ -206,6 +224,7 @@ const showCoinsModal = () => {
 
   $("#coins-modal").modal("show");
 };
+
 $("#coins-modal").on("click", ".modal__switch-input", (event) => {
   changeSelectedCoins(event.currentTarget, true);
 });
@@ -248,4 +267,4 @@ const changeSelectedCoins = (coinSwitchElement, isFromModal) => {
   }
 };
 
-export { display, selectedCoinsArray, createSpinner };
+export { display, selectedCoinsArray, createSpinner, displayAlertMessage };

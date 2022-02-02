@@ -39,29 +39,18 @@ const options = {
 };
 
 const display = async (array) => {
-  console.log(array);
   data = [];
   dataPoints = [];
   containerElement.empty();
+
   if (array.length === 0) {
-    // alert("Sorry, you must select at least one coin to display this report");
-    $("html").prepend(`
-    <div class="alert alert-danger d-flex align-items-center" role="alert">
-    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-    <div>
-    Sorry, you must select at least one coin to display this report
-    <a href="#" class="alert-link">Go back</a>.
-    </div>
-  </div>
-    `);
-    // Coins.display();
-    // return;
+    Coins.displayAlertMessage(
+      `Sorry, you must select at least one coin to display this report <a class="alert-link">Go back</a>.`,
+      "danger"
+    );
   } else {
     let titleText = "";
-    // containerElement.empty();
     coinsArray = array;
-
-    // Coins.createSpinner(containerElement);
 
     addData(array);
     await $.each(array, (key, value) => {
@@ -98,6 +87,7 @@ $("html").on("click", ".alert-link", () => {
   $(".alert").remove();
   return;
 });
+
 const addData = async (coins) => {
   await getDataFromServer(URL, coins)
     .then((coinsData) => {
@@ -115,7 +105,7 @@ const addData = async (coins) => {
       });
     })
     .catch((e) => {
-      console.log(e);
+      Coins.displayAlertMessage(e);
     });
   chart.render();
 };
